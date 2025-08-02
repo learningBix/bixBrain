@@ -1,0 +1,42 @@
+buildscript {
+    ext {
+        // Update these versions to match your desired environment
+        buildToolsVersion = "35.0.0"
+        minSdkVersion = 26
+        compileSdkVersion = 35
+        targetSdkVersion = 34
+        ndkVersion = "27.1.12297006"
+        kotlinVersion = "1.8.0"
+    }
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // If not needed, remove or comment out
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.7.2")
+        classpath("com.facebook.react:react-native-gradle-plugin:0.77.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+/**
+ * Ensures all subprojects use the same versions of libraries, preventing resource conflicts.
+ */
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    configurations.all {
+        resolutionStrategy {
+            // Force consistent versions to avoid duplicates (adjust if needed)
+            force 'androidx.appcompat:appcompat:1.6.1'
+            force 'com.google.android.material:material:1.9.0'
+        }
+    }
+}
