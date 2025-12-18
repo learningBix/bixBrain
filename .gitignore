@@ -2,6 +2,11 @@
 #
 .DS_Store
 
+# Expo
+.expo/
+dist/
+web-build/
+
 # Xcode
 #
 build/

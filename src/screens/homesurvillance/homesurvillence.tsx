@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity, PanResponder } from 'react-native';
 import { WebView } from 'react-native-webview';
 import dgram from 'react-native-udp';
@@ -172,7 +173,7 @@ const HomeScreenSurveillance = () => {
       const message = Buffer.from(commandString, 'utf8');
       
       // Send to the same address as your object detection (you can change this if needed)
-      client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+      client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
         if (error) {
           console.error('UDP Send Error:', error);
         } else {
@@ -244,7 +245,7 @@ const HomeScreenSurveillance = () => {
           <View style={styles.cameraCard}>
             <View style={styles.webviewWrapper}>
               <WebView
-                source={{ uri: 'http://192.168.0.184:8080' }}
+                source={{ uri: `http://${getGlobalIP()}:8080` }}
                 style={styles.webview}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}

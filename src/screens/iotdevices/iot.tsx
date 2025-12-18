@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, PanResponder, TouchableOpacity } from 'react-native';
 import dgram from 'react-native-udp';
 import { Buffer } from 'buffer';
@@ -190,21 +191,35 @@ const QRTrackerControl = () => {
         if (now - lastSentTime.current < 50) return; // Throttle commands
         lastSentTime.current = now;
 
+        const targetIP = getGlobalIP();
+        const commandString = `${command},${speedValue}`;
+        
+        console.log('🔧 QR Tracking Debug:');
+        console.log('📤 Command:', command);
+        console.log('⚡ Speed:', speedValue);
+        console.log('🌐 Target IP:', targetIP);
+        console.log('📦 Full Command:', commandString);
+
         const client = dgram.createSocket('udp4');
         client.on('error', (err) => {
-            console.error('UDP Socket Error:', err);
+            console.error('❌ UDP Socket Error:', err);
             client.close();
         });
 
         client.bind(0, () => {
-            const commandString = `${command},${speedValue}`;
             const message = Buffer.from(commandString, 'utf8');
             // Send to hardware on port 5000
-            client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+            client.send(message, 0, message.length, 5000, targetIP, (error) => {
                 if (error) {
-                    console.error('UDP Send Error:', error);
+                    console.error('❌ UDP Send Error:', error);
+                    console.log('🔍 Troubleshooting:');
+                    console.log('   1. Is your phone connected to the hardware WiFi network?');
+                    console.log('   2. Is the hardware device powered on and listening on port 5000?');
+                    console.log('   3. Is the hardware IP address correct?');
                 } else {
-                    console.log(`Sent to hardware (port 5000): ${commandString}`);
+                    console.log('✅ Sent to hardware successfully!');
+                    console.log('📡 Target:', `${targetIP}:5000`);
+                    console.log('📤 Message:', commandString);
                 }
                 client.close();
             });
@@ -228,28 +243,37 @@ const QRTrackerControl = () => {
         if (now - lastSentTime.current < 50) return;
         lastSentTime.current = now;
 
-        const client = dgram.createSocket('udp4');
-        client.on('error', (err) => {
-            console.error('UDP Socket Error:', err);
-            client.close();
-        });
+        // Only send if QR scanning is active
+        if (deviceStatus === 'active') {
+            const targetIP = getGlobalIP();
+            const commandString = `QR_SPEED_UPDATE,${speed}`;
+            
+            console.log('🔧 QR Speed Update Debug:');
+            console.log('⚡ New Speed:', speed);
+            console.log('🌐 Target IP:', targetIP);
+            console.log('📦 Command:', commandString);
 
-        client.bind(0, () => {
-            // Send speed update if QR scanning is active
-            if (deviceStatus === 'active') {
-                const commandString = `QR_SPEED_UPDATE,${speed}`;
+            const client = dgram.createSocket('udp4');
+            client.on('error', (err) => {
+                console.error('❌ UDP Socket Error:', err);
+                client.close();
+            });
+
+            client.bind(0, () => {
                 const message = Buffer.from(commandString, 'utf8');
                 // Send to hardware on port 5000
-                client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+                client.send(message, 0, message.length, 5000, targetIP, (error) => {
                     if (error) {
-                        console.error('UDP Send Error:', error);
+                        console.error('❌ UDP Send Error:', error);
                     } else {
-                        console.log(`Sent to hardware (port 5000): ${commandString}`);
+                        console.log('✅ Speed update sent successfully!');
+                        console.log('📡 Target:', `${targetIP}:5000`);
+                        console.log('📤 Message:', commandString);
                     }
                     client.close();
                 });
-            }
-        });
+            });
+        }
     };
 
     const updateSliderValue = (xPosition) => {

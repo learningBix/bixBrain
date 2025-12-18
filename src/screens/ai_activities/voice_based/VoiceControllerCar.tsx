@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getGlobalIP } from '../../../utils/networkUtils';
   // Import ScrollView
 import {
   View,
@@ -19,7 +20,7 @@ import dgram from 'react-native-udp';
 import { Buffer } from 'buffer';
 import WebView from 'react-native-webview';
 
-const ESP32_IP = '192.168.0.196'; // ESP32 IP address
+const ESP32_IP = getGlobalIP(); // ESP32 IP address
 const ESP32_PORT = 8888;
 
 const VoiceControlCar = () => {

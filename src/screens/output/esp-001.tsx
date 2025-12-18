@@ -5,10 +5,11 @@ import dgram from 'react-native-udp';
 import { Buffer } from 'buffer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getGlobalIP } from '../../utils/networkUtils';
 
 const UDP_PORT = 8888;
-// Fix: Use direct IP address instead of hostname
-const ESP32_HOST = '192.168.4.1'; // Updated IP address to match the proper format
+// Use global IP address
+const ESP32_HOST = getGlobalIP(); // Updated to use global IP
 
 const PortControlScreen = () => {
     const insets = useSafeAreaInsets();
@@ -22,7 +23,7 @@ const PortControlScreen = () => {
     // Initialize UDP socket
     // Updated socket initialization in useEffect
     useEffect(() => {
-        const socket = dgram.createSocket('udp4');
+        const socket = dgram.createSocket({ type: 'udp4' });
 
         // Add explicit error handling
         socket.on('error', (err) => {

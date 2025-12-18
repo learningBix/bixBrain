@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import {
     View,
     Text,
@@ -17,7 +18,7 @@ const { width, height } = Dimensions.get('window');
 
 const ESP32_IP = 'esptest.local';
 const ESP32_PORT = 8888;
-const STREAM_URL = 'http://esptest.local:81/stream';
+const STREAM_URL = `http://${getGlobalIP()}:81/stream`;
 
 export default function RoboticCarController() {
     const [isOn, setIsOn] = useState(false);

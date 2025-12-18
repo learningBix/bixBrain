@@ -39,7 +39,7 @@ import InputHiveStatus from './src/screens/input/input';
 import SensorHiveStatus from './src/screens/sensor/sensor';
 import AIScreen from './src/screens/ai_activities/ai_activities';
 import FaceDetectionDoorAlarmScreen from './src/screens/ai_activities/camera_based/FaceDetectionDoorAlarmScreen';
-import VoiceControllerOutputScreen from '././src/screens/ai_activities/voice_based/VoiceControllerOutputScreen'
+import VoiceControllerOutputScreen from './src/screens/ai_activities/voice_based/VoiceControllerOutputScreen'
 import voice_controll_car from './src/screens/ai_activities/voice_based/VoiceControllerCar';
 import FaceTractionCameraScreen from './src/screens/ai_activities/camera_based/FaceDetectionBotScreen';
 import PortControlScreen from './src/screens/output/esp-001';
@@ -52,6 +52,8 @@ import PetDetection from './src/screens/face_mask_detection/PetDetection';
 import SensorControl from './src/screens/ai_activities/camera_based/obstacle-avoid';
 import DPadControl from './src/screens/ai_activities/camera_based/obstacle-manual';
 import LineFollowerScreen from './src/screens/face_mask_detection/lineFollower';
+import WiFiConfigScreen from './src/screens/wifi/WiFiConfigScreen';
+import IPConfigScreen from './src/screens/wifi/IPConfigScreen';
 
 const theme = {
   ...DefaultTheme,
@@ -63,14 +65,55 @@ const theme = {
 
 type RootStackParamList = {
   LearnAndPlay: undefined;
+  WiFiConfig: undefined;
+  IPConfig: { ssid: string; password: string };
   Home: undefined;
   StructureScreen: undefined;
+  AutomationScreen: undefined;
+  Roboticsscreen: undefined;
+  InputHiveStatus: undefined;
+  SensorHiveStatus: undefined;
+  AIScreen: undefined;
+  robocar: undefined;
+  OutputScreen: undefined;
+  OLEDBlockScreen: undefined;
+  RGBLEDScreen: undefined;
+  VibrationMotorScreen: undefined;
+  BuzzerScreen: undefined;
+  MusicScreen: undefined;
+  FanBlockScreen: undefined;
+  MotorDriverScreen: undefined;
+  ServoMotorWiFiScreen: undefined;
+  NightLamp: undefined;
+  MorningAlarmScreen: undefined;
+  SmartIrrigationScreen: undefined;
+  DoorAlarmScreen: undefined;
+  WaterOverflowScreen: undefined;
+  PetFeederScreen: undefined;
+  PersonCounterScreen: undefined;
+  HomeSecurityScreen: undefined;
+  LiquidDispenserScreen: undefined;
+  PlantMonitorScreen: undefined;
+  DoorLockScreen: undefined;
   HomeScreenSurveillance: undefined;
   HallSensorScreen: undefined;
   DevicesIotScreen: undefined;
+  Dashboard: undefined;
+  petfeeder: undefined;
+  safebox: undefined;
+  FaceDetectionDoorAlarmScreen: undefined;
+  VoiceControllerOutputScreen: undefined;
+  VoiceControllerCarScreen: undefined;
+  FaceDetectionBotScreen: undefined;
+  ESPScreen: undefined;
   FaceMaskDetectionScreen: undefined;
   FireDetectionRobotScreen: undefined;
+  GenderDetectionScreen: undefined;
+  PetDetectionScreen: undefined;
+  SensorControl: undefined;
+  dpadControl: undefined;
   MultipleDigitalClassificationScreen: undefined;
+  LineFollowerScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -81,6 +124,8 @@ const App: React.FC = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="LearnAndPlay" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="LearnAndPlay" component={LearnAndPlayScreen} />
+          <Stack.Screen name="WiFiConfig" component={WiFiConfigScreen} />
+          <Stack.Screen name="IPConfig" component={IPConfigScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="StructureScreen" component={StructureScreen} />
           <Stack.Screen name="AutomationScreen" component={AutomationScreen} />

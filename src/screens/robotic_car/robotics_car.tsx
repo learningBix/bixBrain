@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import {
   View,
   Text,

@@ -5,6 +5,7 @@ import dgram from 'react-native-udp';
 import { Buffer } from 'buffer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { getGlobalIP } from '../../utils/networkUtils';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,7 +33,7 @@ const FaceTrackerControl = () => {
             // Only append sensitivity if provided
             const commandString = sensitivityValue !== null ? `${command},${sensitivityValue}` : command;
             const message = Buffer.from(commandString, 'utf8');
-            client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+            client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
                 if (error) {
                     console.error('UDP Send Error:', error);
                 } else {
@@ -71,7 +72,7 @@ const FaceTrackerControl = () => {
             if (deviceStatus === 'active') {
                 const commandString = `SENSITIVITY_UPDATE,${speed}`;
                 const message = Buffer.from(commandString, 'utf8');
-                client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+                client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
                     if (error) {
                         console.error('UDP Send Error:', error);
                     } else {
@@ -203,7 +204,7 @@ const FaceTrackerControl = () => {
                         {deviceStatus === 'active' ? (
                             <View style={styles.webviewWrapper}>
                                 <WebView
-                                    source={{ uri: `http://192.168.0.184:81/stream?time=${Date.now()}` }}
+                                    source={{ uri: `http://${getGlobalIP()}:81/stream?time=${Date.now()}` }}
                                     style={styles.webview}
                                     allowsFullscreenVideo={false}
                                     scrollEnabled={false}

@@ -9,6 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 type RootStackParamList = {
   LearnAndPlay: undefined;
+  WiFiConfig: undefined;
   Home: undefined;
 };
 
@@ -158,8 +159,8 @@ const LearnAndPlayScreen: React.FC = () => {
   }, []);
 
   const handlePlayPress = () => {
-    console.log("Start Adventure button pressed - navigating to Home");
-    navigation.navigate('Home');
+    console.log("Start Adventure button pressed - navigating to WiFiConfig");
+    navigation.navigate('WiFiConfig');
   };
 
   const handleHexagonPress = (label) => {

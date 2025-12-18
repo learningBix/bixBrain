@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Switch } from 'react-native-paper';
@@ -37,7 +38,7 @@ const safebox: React.FC = () => {
 
         client.bind(0, () => {
             const message = Buffer.from([0xC3, angle]);
-            client.send(message, 0, message.length, 8888, '192.168.0.101', (error) => {
+            client.send(message, 0, message.length, 8888, getGlobalIP(), (error) => {
                 if (error) {
                     console.error('UDP Send Error:', error);
                 }
@@ -56,7 +57,7 @@ const safebox: React.FC = () => {
                 <View style={styles.cameraCard}>
                     {toggleEnabled ? (
                         <WebView
-                            source={{ uri: 'http://192.168.0.101:81/stream' }}
+                            source={{ uri: `http://${getGlobalIP()}:81/stream` }}
                             style={styles.webview}
                             allowsFullscreenVideo={false}
                             scrollEnabled={false}

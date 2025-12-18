@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getGlobalIP } from '../../utils/networkUtils';
 import {
   View,
   Text,
@@ -344,7 +345,7 @@ const WeatherStation = () => {
       const commandString = 'WEATHER_DATA';
       const message = Buffer.from(commandString, 'utf8');
       // Send to hardware on port 5000
-      client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+      client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
         if (error) {
           console.error('UDP Send Error:', error);
         } else {

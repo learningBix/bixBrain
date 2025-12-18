@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { getGlobalIP } from '../../../utils/networkUtils';
 import { View, Text, StyleSheet, SafeAreaView, Dimensions, PanResponder, TouchableOpacity } from 'react-native';
 import dgram from 'react-native-udp';
 import { Buffer } from 'buffer';
@@ -158,7 +159,7 @@ const SensorControl = () => {
             const commandString = `${command},${speedValue},${distanceValue}`;
             const message = Buffer.from(commandString, 'utf8');
             // Send to hardware on port 5000
-            client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+            client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
                 if (error) {
                     console.error('UDP Send Error:', error);
                 } else {
@@ -197,7 +198,7 @@ const SensorControl = () => {
                 const commandString = `DISTANCE_UPDATE,${speed},${distance}`;
                 const message = Buffer.from(commandString, 'utf8');
                 // Send to hardware on port 5000
-                client.send(message, 0, message.length, 5000, '192.168.0.184', (error) => {
+                client.send(message, 0, message.length, 5000, getGlobalIP(), (error) => {
                     if (error) {
                         console.error('UDP Send Error:', error);
                     } else {
