@@ -1,3 +1,91 @@
+// apply plugin: "com.android.application"
+// apply plugin: "org.jetbrains.kotlin.android"
+// apply plugin: "com.facebook.react"
+// apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+// react {
+//     autolinkLibrariesWithApp()
+// }
+
+// def enableProguardInReleaseBuilds = false
+// def jscFlavor = 'org.webkit:android-jsc:+'
+
+// android {
+//     ndkVersion rootProject.ext.ndkVersion
+//     buildToolsVersion rootProject.ext.buildToolsVersion
+//     compileSdk rootProject.ext.compileSdkVersion
+
+//     namespace "com.bixapp"
+
+//     defaultConfig {
+//         applicationId "com.bixapp"
+//         minSdkVersion rootProject.ext.minSdkVersion
+//         targetSdkVersion rootProject.ext.targetSdkVersion
+//         versionCode 1
+//         versionName "1.0"
+//     }
+
+//     signingConfigs {
+//         debug {
+//             storeFile file('debug.keystore')
+//             storePassword 'android'
+//             keyAlias 'androiddebugkey'
+//             keyPassword 'android'
+//         }
+//         release {
+//             storeFile file(MYAPP_UPLOAD_STORE_FILE)
+//             storePassword MYAPP_UPLOAD_STORE_PASSWORD
+//             keyAlias MYAPP_UPLOAD_KEY_ALIAS
+//             keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+//         }
+//     }
+
+//     buildTypes {
+//         debug {
+//             signingConfig signingConfigs.debug
+//         }
+//         release {
+//             signingConfig signingConfigs.release
+//             minifyEnabled enableProguardInReleaseBuilds
+//             shrinkResources enableProguardInReleaseBuilds
+//             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+//         }
+//     }
+// }
+
+// dependencies {
+//     implementation("com.facebook.react:react-android")
+//     if (hermesEnabled.toBoolean()) {
+//         implementation("com.facebook.react:hermes-android")
+//     } else {
+//         implementation jscFlavor
+//     }
+// }
+
+// // Fix for React Native Vector Icons Gradle validation issues
+// gradle.projectsEvaluated {
+//     tasks.withType(JavaCompile) {
+//         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+//     }
+// }
+
+// // Add explicit dependencies for vector icons tasks
+// project.afterEvaluate {
+//     def copyFontsTask = tasks.findByName('copyReactNativeVectorIconFonts')
+//     def lintTask = tasks.findByName('lintVitalAnalyzeRelease')
+//     def generateReportTask = tasks.findByName('generateReleaseLintVitalReportModel')
+    
+//     if (copyFontsTask && lintTask) {
+//         lintTask.dependsOn(copyFontsTask)
+//     }
+    
+//     if (copyFontsTask && generateReportTask) {
+//         generateReportTask.dependsOn(copyFontsTask)
+//     }
+// }
+
+
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
@@ -14,17 +102,17 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
-
-    namespace "com.bixapp"
-
+    
+    namespace "com.bixbrain"
+    
     defaultConfig {
-        applicationId "com.bixapp"
+        applicationId "com.bixbrain"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 16
+        versionName "2.4"
     }
-
+    
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -33,13 +121,13 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(MYAPP_UPLOAD_STORE_FILE)
-            storePassword MYAPP_UPLOAD_STORE_PASSWORD
-            keyAlias MYAPP_UPLOAD_KEY_ALIAS
-            keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            storeFile file(BIXBRAIN_UPLOAD_STORE_FILE)
+            storePassword BIXBRAIN_UPLOAD_STORE_PASSWORD
+            keyAlias BIXBRAIN_UPLOAD_KEY_ALIAS
+            keyPassword BIXBRAIN_UPLOAD_KEY_PASSWORD
         }
     }
-
+    
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -51,13 +139,65 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    
+    // Ensure problematic permissions are removed during manifest merge
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def processManifest = output.getProcessManifestProvider().get()
+            processManifest.doLast { task ->
+                def outputDir = task.multiApkManifestOutputDirectory
+                File outputDirectory
+                if (outputDir instanceof File) {
+                    outputDirectory = outputDir
+                } else {
+                    outputDirectory = outputDir.get().asFile
+                }
+                File manifestOutFile = file("$outputDirectory/AndroidManifest.xml")
+                println("Manifest merger output: $manifestOutFile")
+                
+                // Verify that problematic permissions are removed
+                if (manifestOutFile.exists()) {
+                    def manifestContent = manifestOutFile.text
+                    if (manifestContent.contains("MANAGE_EXTERNAL_STORAGE")) {
+                        throw new GradleException("MANAGE_EXTERNAL_STORAGE permission still present in merged manifest!")
+                    }
+                    if (manifestContent.contains("WRITE_EXTERNAL_STORAGE")) {
+                        throw new GradleException("WRITE_EXTERNAL_STORAGE permission still present in merged manifest!")
+                    }
+                    println("✅ Manifest verification passed - no problematic permissions found")
+                }
+            }
+        }
+    }
 }
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+}
+
+// Fix for React Native Vector Icons Gradle validation issues
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+}
+
+// Add explicit dependencies for vector icons tasks
+project.afterEvaluate {
+    def copyFontsTask = tasks.findByName('copyReactNativeVectorIconFonts')
+    def lintTask = tasks.findByName('lintVitalAnalyzeRelease')
+    def generateReportTask = tasks.findByName('generateReleaseLintVitalReportModel')
+    
+    if (copyFontsTask && lintTask) {
+        lintTask.dependsOn(copyFontsTask)
+    }
+    if (copyFontsTask && generateReportTask) {
+        generateReportTask.dependsOn(copyFontsTask)
     }
 }
